@@ -1,5 +1,9 @@
+import locale
 from data_generator import save_students_to_csv, generate_students_data
 import csv
+
+
+locale.setlocale(locale.LC_ALL, 'uk_UA.UTF-8')
 
 
 def print_students_from_csv(filename: str) -> None:
@@ -27,19 +31,19 @@ def sort_menu(students):
         choice = input("Ваш вибір: ")
 
         if choice == '1':
-            sorted_students = sorted(students, key=lambda x: x.surname)
+            sorted_students = sorted(students, key=lambda x: locale.strxfrm(x.surname))
             print("\nСортування за прізвищем:")
             print_students(sorted_students)
         elif choice == '2':
-            sorted_students = sorted(students, key=lambda x: x.name)
+            sorted_students = sorted(students, key=lambda x: locale.strxfrm(x.name))
             print("\nСортування за ім'ям:")
             print_students(sorted_students)
         elif choice == '3':
-            sorted_students = sorted(students, key=lambda x: x.patronymic)
+            sorted_students = sorted(students, key=lambda x: locale.strxfrm(x.patronymic))
             print("\nСортування за по батькові:")
             print_students(sorted_students)
         elif choice == '4':
-            sorted_students = sorted(students, key=lambda x: x.phone)
+            sorted_students = sorted(students, key=lambda x: locale.strxfrm(x.phone))
             print("\nСортування за номером телефону:")
             print_students(sorted_students)
         elif choice == '5':

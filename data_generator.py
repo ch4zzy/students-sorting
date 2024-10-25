@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from faker import Faker
-import csv
+from typing import Literal
+
+
+fake = Faker('uk_UA')
 
 
 @dataclass
@@ -11,32 +14,20 @@ class Student:
     phone: str
 
 
-def generate_patronymic(fake, gender):
-    first_name = fake.first_name_male() if gender == 'male' else fake.first_name_female()
-    if gender == 'male':
-        return first_name + "ович"
-    else:
-        return first_name + "івна"
-
-
-def generate_student_data(fake: Faker) -> Student:
-    gender = fake.random_element(elements=("male", "female"))
-    name = fake.first_name_male() if gender == "male" else fake.first_name_female()
-    surname = fake.last_name()
-    patronymic = generate_patronymic(fake, gender)
-    phone = fake.phone_number()
-    return Student(name, surname, patronymic, phone)
-
-
-def generate_students_data(count: int) -> list[Student]:
-    fake = Faker("uk_UA")
-    students = [generate_student_data(fake) for _ in range(count)]
+def generate_students_data(num_students: int):
+    students = []
+    for _ in range(num_students):
+        full_name = fake.full_name(gender='M' if fake.random_element(['M', 'F']) == 'M' else 'F')
+        surname, name, patronymic = full_name.split()
+        phone = fake.phone_number()
+        students.append(Student(name=name, surname=surname, patronymic=patronymic, phone=phone))
     return students
 
 
-def save_students_to_csv(filename: str, students: list[Student]) -> None:
-    with open(filename, mode="w", newline="", encoding="utf-8") as file:
+def save_students_to_csv(filename: str, students):
+    import csv
+    with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(["Name", "Surname", "Patronymic", "Phone"])
+        writer.writerow(['Surname', 'Name', 'Patronymic', 'Phone'])
         for student in students:
-            writer.writerow([student.name, student.surname, student.patronymic, student.phone])
+            writer.writerow([student.surname, student.name, student.patronymic, student.phone])
